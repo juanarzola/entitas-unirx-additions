@@ -22,7 +22,7 @@ Group observables are similar to the Entity observables: you can react to compon
 
 The `OnAny` extensions create observables for combinations of additions, removals and replacements. They generate `AnyEntityChangeEventArgs` objects with the data of the addition, removal or replacement - whichever happened.
 
-**Typical usage:**
+## Typical usage
 
 The Entity extensions can be used anywhere you have an Entity instance (Like the execute method of a reactive system):
  
