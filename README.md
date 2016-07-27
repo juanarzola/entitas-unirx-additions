@@ -25,8 +25,8 @@ The `OnAny` extensions create observables for combinations of additions, removal
 **Typical usage:**
 
 The Entity extensions can be used anywhere you have an Entity instance (Like the execute method of a reactive system):
-
-``csharp
+ 
+```csharp
 public class StepperSystem : IReactiveSystem, IEnsureComponents {
     
     public TriggerOnEvent trigger { get { return matcher().OnEntityAdded();  }}
@@ -68,12 +68,11 @@ public class StepperSystem : IReactiveSystem, IEnsureComponents {
             }).AddTo(e.view.gameObject);
     }
 }
+```
 
-``
+The Group extensions are useful as the setup code of Initialize systems (Within SetPool):
 
-The Group extensions are useful as the setup code of Initialize systems (Within SetPool).
-
-``csharp
+```csharp
 public class CleanupOrphanedEntitiesSystem : IInitializeSystem, ISetPool {
     
     public void SetPool(Pool pool){
@@ -89,4 +88,4 @@ public class CleanupOrphanedEntitiesSystem : IInitializeSystem, ISetPool {
     
     public void Initialize(){}
 }
-``
+```
