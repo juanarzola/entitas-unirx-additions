@@ -2,7 +2,7 @@
 
 [Entitas](https://github.com/neuecc/UniRx) is an excellent ECS framework that works with Unity. [UniRx](https://github.com/neuecc/UniRx) is a reactive programming framework for Unity. These are simple extensions that I wrote in order to be able to use UniRx's reactive programming with Entitas.  
 
-They simply wrap Entita's built in C# events for changes in entities and groups. They use generics to limit changes to a component type.
+They wrap Entita's built in C# events for changes in entities and groups. They use generics to limit changes to a component type.
 
 With the Entity observables, you can react to component changes in an entity instance. They include:
 
