@@ -8,7 +8,7 @@ With the Entity observables, you can react to component changes in an entity ins
 
  - `OnComponentAddedAsObservable<Component>` - A Component was added on the entity instance
  - `OnComponentReplacedAsObservable<Component>` - A Component value changed in the entity (it was replaced by another component of the same type)
- - `OnComponentRemovedAsObservable<Component>` = A Component was removed.
+ - `OnComponentRemovedAsObservable<Component>` - A Component was removed.
 
 Group observables are similar to the Entity observables: you can react to component changes, but you do so on groups of entities that match a query.  This has the advantage that you don't need the entity instances for the reactive code, so you can do the setup up-front on System initialization before entity instances are available. They include:
 
