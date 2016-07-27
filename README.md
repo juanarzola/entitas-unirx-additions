@@ -18,6 +18,75 @@ Group observables are similar to the Entity observables: you can react to compon
 
 ## Extended additions
 
-*Entity's OnAnyChangeObservable<Component> and Group's OnAnyEntityChangeObservable*
+**Entity's `OnAnyChangeObservable\<Component\>` and Group's OnAnyEntityChangeObservable\<Component\>**
 
-Sometimes you may want to combine observing for additions, removals and replacements in one expression.  It can be tricky to combine the base events with Merge() and subscribe to it because additions, removals and replacements streams are of different types.  In order to combine them into one stream, they need to be of the same type. The _OnAny_ extensions do this - they convert them to AnyEntityChangeEventArgs types.
+The `OnAny` extensions create observables for combinations of additions, removals and replacements. They generate `AnyEntityChangeEventArgs` objects with the data of the addition, removal or replacement - whichever happened.
+
+**Typical usage:**
+
+The Entity extensions can be used anywhere you have an Entity instance (Like the execute method of a reactive system):
+
+``csharp
+public class StepperSystem : IReactiveSystem, IEnsureComponents {
+    
+    public TriggerOnEvent trigger { get { return matcher().OnEntityAdded();  }}
+    public IMatcher matcher(){return Matcher.AllOf(Matcher.SteppedMover);}
+    public IMatcher ensureComponents {  get {  return Matcher.View; } }
+
+    public void Execute(List<Entity> entities) {	
+        foreach (var e in entities) {
+            StartStepperTimer(e);
+        }
+    }
+    private void StartStepperTimer(Entity e){
+
+        // Add a timer after the stepper component is added. Timer is removed whenever the component is removed or replaced by another one.
+
+        Observable.Timer(new DateTimeOffset(), new TimeSpan(0,0,1))
+            .TakeUntil(e.OnAnyChangeObservable<Stepper>())
+            .Subscribe(timerCount => {
+                var position = e.position;
+                var deltaAmount = 1.0f;
+                Vector3 delta = Vector3.zero;
+                switch(e.stepper.direction){
+                    case stepper.Direction.Left:
+                    delta = new Vector3(deltaAmount, 0, 0);
+                    break;
+                    case SteppedMover.Direction.Right:
+                    delta = new Vector3(-deltaAmount, 0, 0);
+                    break;
+                    case SteppedMover.Direction.Up:
+                    delta = new Vector3(0, deltaAmount, 0);
+                    break;
+                    case SteppedMover.Direction.Down:
+                    delta = new Vector3(0, -deltaAmount, 0);
+                    break;
+                }
+                e.ReplacePosition(position.x + delta.x, 
+                                    position.y + delta.y, 
+                                    position.z + delta.z);                                    
+            }).AddTo(e.view.gameObject);
+    }
+}
+
+``
+
+The Group extensions are useful as the setup code of Initialize systems (Within SetPool).
+
+``csharp
+public class CleanupOrphanedEntitiesSystem : IInitializeSystem, ISetPool {
+    
+    public void SetPool(Pool pool){
+        pool.GetGroup(Matcher.View)
+            .OnEntityAddedAsObservable<View>()
+            .Where(evt => evt.component.entityIsDestroyedWithGameObject)
+            .Subscribe(evt => {	
+                evt.entity.view.gameObject.OnDestroyAsObservable().Subscribe(_ => {
+                    pool.DestroyEntity(evt.entity);
+                });
+            });
+    }
+    
+    public void Initialize(){}
+}
+``
