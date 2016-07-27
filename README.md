@@ -18,7 +18,7 @@ Group observables are similar to the Entity observables: you can react to compon
 
 ## Extended additions
 
-**Entity's `OnAnyChangeObservable\<Component\>` and Group's OnAnyEntityChangeObservable\<Component\>**
+**Entity's `OnAnyChangeObservable<Component>` and Group's OnAnyEntityChangeObservable\<Component\>**
 
 The `OnAny` extensions create observables for combinations of additions, removals and replacements. They generate `AnyEntityChangeEventArgs` objects with the data of the addition, removal or replacement - whichever happened.
 
